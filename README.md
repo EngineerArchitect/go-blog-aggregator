@@ -16,6 +16,44 @@ go install github.com/yourusername/blog-aggregator@latest
 blog-aggregator <command>
 ```
 
+## Config
+
+Create a `.gatorconfig.json` file in your home directory with the following structure:
+
+```json
+{
+  "db_url": "postgres://username:@localhost:5432/database?sslmode=disable"
+}
+```
+
+Replace the values with your database connection string.
+
+## Usage
+
+Create a new user:
+
+```bash
+blog-aggregator register <name>
+```
+
+Add a feed:
+
+```bash
+blog-aggregator addfeed <url>
+```
+
+Start the aggregator:
+
+```bash
+blog-aggregator agg 30s
+```
+
+View the posts:
+
+```bash
+blog-aggregator browse [limit]
+```
+
 ## Commands
 
 The Blog Aggregator provides several commands to interact with the system:
@@ -59,19 +97,19 @@ go install github.com/pressly/goose/v3/cmd/goose@latest
 
 Check installed correctly by running
 
-```
+```shell
 goose -version
 ```
 
 run db migrations using
 
 The connection string takes the form
-```
+```shell
 protocol://user:pass@host:port/database
 ```
 
 for example:
-```
+```shell
 postgres://user:passd@host:5432/gator
 ```
 
