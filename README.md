@@ -1,5 +1,35 @@
 # Blog Aggregator
 
+## Installation
+
+Postgres and Go are required to run the program.
+
+Install the program using the `go install` command:
+
+1. Install the program:
+```shell
+go install github.com/yourusername/blog-aggregator@latest
+```
+
+2. Run the program:
+```shell
+blog-aggregator <command>
+```
+
+## Commands
+
+The Blog Aggregator provides several commands to interact with the system:
+
+- `login <username>`: Sign in user.
+- `register <username>`: Register a new user.
+- `users`: List all registered users.
+- `agg <time-between-reqs>`: Start collecting feeds at specified interval.
+- `addfeed <name> <url>`: Add a new feed with the specified name and URL.
+- `feeds`: List all available feeds.
+- `follow <url>`: Follow a feed with the specified URL.
+- `following`: List all feeds the current user is following.
+- `unfollow <feed-url>`: Unfollow the feed with the specified URL.
+- `browse [limit]`: Browse latest posts [with an optional limit].
 
 ## Configuratin Database
 
