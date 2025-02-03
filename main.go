@@ -18,7 +18,7 @@ type state struct {
 func main() {
 	// Test Arguments
 	args := os.Args
-	if len(args) < 3 {
+	if len(args) < 2 {
 		log.Fatal("Usage: cli <command> [args...]")
 		return
 	}
@@ -47,8 +47,10 @@ func main() {
 	cmds := commands{
 		registeredCommands: make(map[string]func(*state, command) error),
 	}
+
 	cmds.register("login", loginHandler)
-	cmds.register("register", handlerRegister)
+	cmds.register("register", registerHandler)
+	cmds.register("reset", resetHandler)
 
 	if len(os.Args) < 2 {
 		log.Fatal("Usage: cli <command> [args...]")
