@@ -1,36 +1,64 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"os"
 
 	"github.com/EngineerArchitect/blog-aggregator/internal/config"
+	"github.com/EngineerArchitect/blog-aggregator/internal/database"
+	_ "github.com/lib/pq"
 )
 
+type state struct {
+	db  *database.Queries
+	cfg *config.Config
+}
+
 func main() {
-	// Arguments
+	// Test Arguments
 	args := os.Args
 	if len(args) < 3 {
 		log.Fatal("Usage: cli <command> [args...]")
 		return
 	}
 
+	// Generate Config
 	cfg, err := config.Read()
 	if err != nil {
 		panic(err)
 	}
-	appState := state{
+
+	// Open and create Database connection
+	db, err := sql.Open("postgres", cfg.DBURL)
+	if err != nil {
+		log.Fatalf("error connecting to db: %v", err)
+	}
+	defer db.Close()
+	dbQueries := database.New(db)
+
+	// Initialize application state
+	programState := &state{
+		db:  dbQueries,
 		cfg: &cfg,
 	}
+
+	// Register application commands
 	cmds := commands{
-		cmds: make(map[string]func(*state, command) error),
+		registeredCommands: make(map[string]func(*state, command) error),
 	}
 	cmds.register("login", loginHandler)
-	err = cmds.run(&appState, command{
-		Name: args[1],
-		Args: args[2:],
-	})
+	cmds.register("register", handlerRegister)
+
+	if len(os.Args) < 2 {
+		log.Fatal("Usage: cli <command> [args...]")
+		return
+	}
+	cmdName := os.Args[1]
+	cmdArgs := os.Args[2:]
+
+	err = cmds.run(programState, command{Name: cmdName, Args: cmdArgs})
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
