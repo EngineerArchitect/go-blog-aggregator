@@ -1,24 +1,36 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"os"
 
 	"github.com/EngineerArchitect/blog-aggregator/internal/config"
 )
 
 func main() {
+	// Arguments
+	args := os.Args
+	if len(args) < 3 {
+		log.Fatal("Usage: cli <command> [args...]")
+		return
+	}
+
 	cfg, err := config.Read()
 	if err != nil {
-		log.Fatalf("error reading config: %v", err)
+		panic(err)
 	}
-	fmt.Printf("Read config: %+v\n", cfg)
-
-	err = cfg.SetUser("lane")
-
-	cfg, err = config.Read()
+	appState := state{
+		cfg: &cfg,
+	}
+	cmds := commands{
+		cmds: make(map[string]func(*state, command) error),
+	}
+	cmds.register("login", loginHandler)
+	err = cmds.run(&appState, command{
+		Name: args[1],
+		Args: args[2:],
+	})
 	if err != nil {
-		log.Fatalf("error reading config: %v", err)
+		panic(err)
 	}
-	fmt.Printf("Read config again: %+v\n", cfg)
 }
